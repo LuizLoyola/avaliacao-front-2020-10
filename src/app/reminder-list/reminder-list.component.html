@@ -1,0 +1,84 @@
+<table class="row-border hover" datatable >
+  <thead>
+  <tr>
+    <th>Título</th>
+    <th>Prioridade</th>
+    <th>Conteúdo</th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let reminder of reminders">
+    <td>{{ reminder.title }}</td>
+    <td>
+      <i class="mr-1 fas fa-{{priorityIcon(reminder.priority)}}"></i>
+      <span>{{reminder.priority}}</span>
+    </td>
+    <td>{{ reminder.content }}</td>
+    <td>
+      <button (click)="editReminder(reminder, editModal)"><i class="fas fa-pencil-alt"></i></button>
+      <button (click)="deleteReminder(reminder, deleteModal)"><i class="fas fa-trash"></i></button>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<ng-template #editModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">{{!this.selectedReminder ? 'Novo ' : 'Editar '}} lembrete</h4>
+    <button (click)="modal.dismiss()" aria-label="Close" class="close" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="dynamicForm">
+      <div class="form-group">
+        <label for="title">Título<span *ngIf="hasErrors('title')"
+                                       class="text-danger ml-2">Campo obrigatório!</span></label>
+        <div class="input-group">
+          <input class="form-control" formControlName="title" id="title"/>
+        </div>
+
+        <label for="priority">Prioridade</label>
+        <div class="input-group">
+          <select formControlName="priority" id="priority">
+            <option *ngFor="let priority of priorities" [ngValue]="priority">{{priority}}</option>
+          </select>
+        </div>
+
+        <label for="content">Conteúdo<span *ngIf="hasErrors('content')"
+                                           class="text-danger ml-2">Campo obrigatório!</span></label>
+        <div class="input-group">
+          <textarea class="form-control" formControlName="content" id="content"></textarea>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button (click)="save()" class="btn btn-outline-dark" type="button">Save</button>
+  </div>
+</ng-template>
+
+
+<ng-template #deleteModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Deletar lembrete</h4>
+    <button (click)="modal.dismiss()" aria-label="Close" class="close" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>
+      Tem certeza que deseja deletar este lembrete?
+    </p>
+    <p>
+      <b>{{selectedReminder.title}}</b>
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button (click)="modal.close(true)" class="btn btn-outline-dark" type="button">Deletar</button>
+  </div>
+</ng-template>
+
+
+<button (click)="newReminder(editModal)">Novo lembrete</button>
